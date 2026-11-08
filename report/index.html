@@ -70,9 +70,9 @@
     <div class="row">
       <label>Campus<select id="r-campus"></select></label>
       <label>When<select id="r-when">
-        <option value="now">Happening now</option>
-        <option value="soon">Before next service</option>
-        <option value="fyi">For later</option>
+        <option value="soon">Needs fixing</option>
+        <option value="fyi">Just noting</option>
+        <option value="now">Happening now (alerts the TD)</option>
       </select></label>
     </div>
     <label>Area<select id="r-area">
@@ -176,9 +176,14 @@ $('report').onsubmit = async (e) => {
   try {
     const { data, error } = await sb.from('issues').insert({ campus: $('r-campus').value, area: $('r-area').value, urgency: $('r-when').value, title, details: $('r-details').value.trim() }).select().single();
     if (error) throw error;
-    sb.functions.invoke('troubleshoot', { body: { issue_id: data.id } });
     $('r-title').value = ''; $('r-details').value = '';
-    openIssue(data.id);
+    // Only a "happening now" report pages the TD and gets troubleshooting steps; notes go on the director's list.
+    if (data.urgency === 'now') {
+      sb.functions.invoke('troubleshoot', { body: { issue_id: data.id } });
+      openIssue(data.id);
+    } else {
+      $('r-err').textContent = 'Logged. Thanks!';
+    }
   } catch (err) { $('r-err').textContent = msg(err); }
   $('r-go').disabled = false;
 };
