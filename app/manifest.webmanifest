@@ -1,6 +1,6 @@
 {
-  "name": "Campus Command",
-  "short_name": "Campus Command",
+  "name": "Standby by Sunday Cues",
+  "short_name": "Standby",
   "description": "Campus checklists, team chat and problem reports for the production team.",
   "start_url": "./",
   "scope": "./",
